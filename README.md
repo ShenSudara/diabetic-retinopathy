@@ -20,11 +20,14 @@ showing which regions of the retina influenced the decision.
 
 | Upload & settings | Prediction result |
 |---|---|
-| ![Upload screen](docs/screenshots/home.png) | ![Prediction result](docs/screenshots/result.png) |
+
+<img width="1449" height="825" alt="image" src="https://github.com/user-attachments/assets/eb15ff2d-47d0-4712-8f50-c826e696d1b4" />
+<img width="1449" height="825" alt="image" src="https://github.com/user-attachments/assets/80128d39-49ff-4ff0-b7be-1ed1fe5f89b7" />
 
 **Grad-CAM visualisation**
 
-![Grad-CAM heatmap](docs/screenshots/gradcam.png)
+!<img width="1449" height="825" alt="image" src="https://github.com/user-attachments/assets/ec64e2f0-f425-4c53-a67e-2debd498437d" />
+
 
 ---
 
