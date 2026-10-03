@@ -1,0 +1,11 @@
+# --- IMPORTANT -------------------------------------------------------------
+# Replace the TensorFlow line with the exact version you TRAINED with
+# (run `pip show tensorflow` or `pip show keras` in your training environment).
+# .keras files can fail to load, or predict differently, across major versions.
+# The app was smoke-tested here with tensorflow-cpu 2.21 / Keras 3.15.
+# ---------------------------------------------------------------------------
+streamlit>=1.40
+tensorflow-cpu>=2.16,<3
+opencv-python-headless>=4.8
+numpy
+pillow

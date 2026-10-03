@@ -1,0 +1,6 @@
+[server]
+# Keep in sync with MAX_FILE_BYTES in preprocessing.py (value is in MB)
+maxUploadSize = 20
+
+[browser]
+gatherUsageStats = false
