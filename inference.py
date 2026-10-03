@@ -79,30 +79,17 @@ def _last_4d_layer(layers):
 def build_gradcam_model(model: keras.Model) -> keras.Model:
     """Return a model mapping input -> [last conv feature map, predictions].
 
-    Handles both layouts a transfer-learning model is usually saved in:
-      * nested: Input -> base network (a Model layer) -> pooling/dense head
-      * flat:   one single graph with the conv layers at the top level
+    Both models use the head: base network -> [GlobalAveragePooling2D,
+    GlobalMaxPooling2D] -> Concatenate -> ... so the feature map is taken
+    as the input of the GlobalAveragePooling2D layer (same as the Colab
+    notebooks). Falls back to the last 4D layer for flat models.
     """
-    nested = [layer for layer in model.layers if isinstance(layer, keras.Model)]
-    if nested:
-        sub = max(nested, key=lambda m: len(m.layers))
-        target = _last_4d_layer(sub.layers)
-        if target is None:
-            raise ValueError("No convolutional feature map found in the base network.")
-        conv_model = keras.Model(sub.input, [target.output, sub.output])
-
-        # Re-run the outer model layer by layer so the conv output is exposed.
-        inp = keras.Input(shape=model.input_shape[1:])
-        x = inp
-        conv_out = None
-        for layer in model.layers:
-            if isinstance(layer, keras.layers.InputLayer):
-                continue
-            if layer is sub:
-                conv_out, x = conv_model(x)
-            else:
-                x = layer(x)
-        return keras.Model(inp, [conv_out, x])
+    pool_layer = next(
+        (l for l in model.layers if isinstance(l, keras.layers.GlobalAveragePooling2D)),
+        None,
+    )
+    if pool_layer is not None:
+        return keras.Model(model.inputs, [pool_layer.input, model.output])
 
     target = _last_4d_layer(model.layers)
     if target is None:
@@ -126,7 +113,7 @@ def compute_gradcam(grad_model: keras.Model, batch: np.ndarray, class_index: int
     return cam.astype(np.float32)
 
 
-def overlay_heatmap(image_rgb: np.ndarray, heatmap: np.ndarray, alpha: float = 0.4) -> np.ndarray:
+def overlay_heatmap(image_rgb: np.ndarray, heatmap: np.ndarray, alpha: float = 0.6) -> np.ndarray:
     """Blend a JET-coloured heatmap onto an RGB uint8 image."""
     h, w = image_rgb.shape[:2]
     cam = cv2.resize(heatmap, (w, h), interpolation=cv2.INTER_LINEAR)
